@@ -13,11 +13,11 @@
  */
 package org.openmrs.module.smsreminder.api;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests {@link {SmsReminderService}}.
@@ -26,6 +26,6 @@ public class SmsReminderServiceTest extends BaseModuleContextSensitiveTest {
 	
 	@Test
 	public void shouldSetupContext() {
-		assertNotNull(Context.getService(SmsReminderService.class));
+		assertNotNull(Context.getService(SmsReminderService.class));  
 	}
 }
