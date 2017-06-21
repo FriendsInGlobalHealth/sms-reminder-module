@@ -7,7 +7,7 @@
 	<version>1.0</version>
 	<packaging>pom</packaging>
 	<name>SMS Reminder to FGH Patients Module</name>
-	<description>Reminder to FGH Patients to next visit.</description>
+	<description>Reminder to FGH Patients to next visit...</description>
 	<url>https://wiki.openmrs.org/display/docs/SMS+Reminder+to+FGH+Patients+Module+Module</url>
 	
 	<developers>

@@ -16,6 +16,7 @@ public class Sent extends BaseOpenmrsData implements Serializable {
     private Date alertDate;
     private String message;
     private String status;
+    private String reference;
     private Patient patient;
     private Integer remainDays;
 
@@ -64,6 +65,14 @@ public class Sent extends BaseOpenmrsData implements Serializable {
     public void setRemainDays(Integer remainDays) {
         this.remainDays = remainDays;
     }
+    
+    public String getReference() {
+		return reference;
+	}
+    
+    public void setReference(String reference) {
+		this.reference = reference;
+	}
 
     public String getStatus() {
         return status;

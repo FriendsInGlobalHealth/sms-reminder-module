@@ -1,84 +1,126 @@
 package org.openmrs.module.smsreminder.scheduler;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.APIException;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.LocationService;
-import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.smsreminder.SmsReminderUtils;
-import org.openmrs.module.smsreminder.api.SmsReminderService;
 import org.openmrs.module.smsreminder.modelo.NotificationPatient;
-import org.openmrs.module.smsreminder.modelo.Sent;
-import org.openmrs.module.smsreminder.utils.*;
+import org.openmrs.module.smsreminder.utils.DatasUtil;
+import org.openmrs.module.smsreminder.utils.DateUtil;
+import org.openmrs.module.smsreminder.utils.SmsProperties;
+import org.openmrs.module.smsreminder.utils.SmsReminderHelper;
+import org.openmrs.module.smsreminder.utils.SmsReminderResource;
+import org.openmrs.module.smsreminder.utils.Validator;
 import org.openmrs.scheduler.tasks.AbstractTask;
-
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by nelson.mahumane on 20-10-2015.
  */
 public class SendSmsReminderTask extends AbstractTask {
-    //private static Log log = LogFactory.getLog(SendSmsReminderTask.class);
-    private Log log = LogFactory.getLog(getClass());
+ private Log log = LogFactory.getLog(getClass());
 
-    @Override
-    public void execute() {
-        Context.openSession();
-        log.info("Starting send SMS ... ");
-        try {
-            AdministrationService administrationService = Context.getAdministrationService();
-            List<NotificationPatient> notificationPatients = SmsReminderResource.getAllNotificationPatiens();
-            GlobalProperty gpSmscenter = administrationService.getGlobalPropertyObject("smsreminder.smscenter");
-            String smscenter = gpSmscenter.getPropertyValue();
-            GlobalProperty gpPort = administrationService.getGlobalPropertyObject("smsreminder.port");
-            String port = gpPort.getPropertyValue();
-            GlobalProperty gpMessage = administrationService.getGlobalPropertyObject("smsreminder.message");
-            String message = gpMessage.getPropertyValue();
-            GlobalProperty gpUs = administrationService.getGlobalPropertyObject("smsreminder.us");
-            String us = gpUs.getPropertyValue();
-            GlobalProperty gpBandRate = administrationService.getGlobalPropertyObject("smsreminder.bandRate");
-            int bandRate = Integer.parseInt(gpBandRate.getPropertyValue());
-            SmsReminderService smsReminderService = SmsReminderUtils.getService();
-            PatientService patientService = Context.getPatientService();
-            LocationService locationService = Context.getLocationService();
-            SMSClient smsClient = new SMSClient(0);
-            if (notificationPatients != null && !notificationPatients.isEmpty()) {
-                Iterator<NotificationPatient> it = notificationPatients.iterator();
-                while (it.hasNext()) {
-                    NotificationPatient notificationPatient = it.next();
-                    String messagem = (notificationPatient.getSexo().equals("M")) ?
-                            "O sr: " + notificationPatient.getNome() + " " + message + " " + "no " + locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia  " + DatasUtil.formatarDataPt(notificationPatient.getProximaVisita()) :
-                            "A sra: " + notificationPatient.getNome() + " " + message + " " + "no " + locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia  " + DatasUtil.formatarDataPt(notificationPatient.getProximaVisita());
+ @SuppressWarnings("unchecked")
+ @Override
+ public void execute() {
+  Context.openSession();
+  System.out.println("Start sms reminder task... ");
+  try {
+   AdministrationService administrationService = Context.getAdministrationService();
 
-                    try {
-                        synchronized (smsClient) {
-                            smsClient.sendMessage(smscenter, port, bandRate, Validator.cellNumberValidator(notificationPatient.getTelemovel()), messagem);
-                            while (smsClient.status == -1)
-                                smsClient.wait();
-                        }
-                        Sent sent = new Sent();
-                        sent.setCellNumber(notificationPatient.getTelemovel());
-                        sent.setAlertDate(notificationPatient.getProximaVisita());
-                        sent.setMessage(messagem);
-                        sent.setRemainDays(notificationPatient.getDiasRemanescente());
-                        sent.setPatient(patientService.getPatient(notificationPatient.getIdentificador()));
-                        if (smsClient.status == 0)
-                            smsReminderService.saveSent(sent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        } catch (Throwable t) {
-            log.error("Error while sending SMS ", t);
-            throw new APIException(t);
-        } finally {
-            Context.closeSession();
+   List < NotificationPatient > notificationPatients = SmsReminderResource.getAllNotificationPatiens();
+
+   GlobalProperty gpPort = administrationService.getGlobalPropertyObject("smsreminder.port");
+
+   String port = gpPort.getPropertyValue();
+
+   GlobalProperty gpMessage = administrationService.getGlobalPropertyObject("smsreminder.message");
+
+   String message = gpMessage.getPropertyValue();
+
+   GlobalProperty gpUs = administrationService.getGlobalPropertyObject("smsreminder.us");
+
+   String us = gpUs.getPropertyValue();
+
+   LocationService locationService = Context.getLocationService();
+
+   if (new SmsReminderHelper().isNodeInstalled()) {
+    System.out.println("node is installed...");
+
+    if (notificationPatients != null && !notificationPatients.isEmpty()) {
+
+     System.out.println("Size do loop..." + notificationPatients.size());
+     Iterator < NotificationPatient > it = notificationPatients.iterator();
+
+     List < NotificationPatient > patientList = IteratorUtils.toList(it);
+
+     for (int i = 0; i < patientList.size(); i++) {
+
+      String messagem = (patientList.get(i).getSexo().equals("M")) ? 
+    		  "O sr: " + patientList.get(i).getNome() + " " + message + " " + "no " + locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia " + DatasUtil.formatarDataPt(patientList.get(i).getProximaVisita()) :
+    		  "A sra: " + patientList.get(i).getNome() + " " + message + " " + "no " + locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia " + DatasUtil.formatarDataPt(patientList.get(i).getProximaVisita());
+      
+      System.out.println("A mensagem a ser enviada " + messagem);
+
+      try {
+       String nodeCall = SmsProperties.NODE + " " + SmsProperties.PATH_TO_NODE + " " + port + " " + Validator.cellNumberValidator(patientList.get(i).getTelemovel()) + " " + messagem + " " + DateUtil.formatDate(patientList.get(i).getProximaVisita()) + " " +
+        patientList.get(i).getDiasRemanescente() + " " + patientList.get(i).getIdentificador();
+       System.out.println("node call: " + nodeCall);
+
+       List < String > command = new ArrayList < String > ();
+       command.add(SmsProperties.NODE);
+       command.add(SmsProperties.PATH_TO_NODE);
+       command.add(port);
+       command.add(Validator.cellNumberValidator(patientList.get(i).getTelemovel()));
+       command.add(messagem);
+       command.add(DateUtil.formatDate(patientList.get(i).getProximaVisita()));
+       command.add(patientList.get(i).getDiasRemanescente().toString());
+       command.add(patientList.get(i).getIdentificador().toString());
+
+       ProcessBuilder builder = new ProcessBuilder(command);
+
+       final Process process = builder.start();
+
+       long now = System.currentTimeMillis();
+       long timeoutInMillis = 1000L * 10;
+       long finish = now + timeoutInMillis;
+       while (isAlive(process)) {
+        Thread.sleep(10);
+        if (System.currentTimeMillis() > finish) {
+         process.destroy();
         }
-        log.info("Finish send SMS");
+       }
+
+      } catch (IOException e) {
+       e.printStackTrace();
+      }
+     }
     }
+   }
+
+  } catch (Throwable t) {
+   log.error("Error while sending SMS ", t);
+   throw new APIException(t);
+  } finally {
+   Context.closeSession();
+  }
+  log.info("End sms reminder task");
+ }
+
+ public static boolean isAlive(Process p) {
+  try {
+   p.exitValue();
+   return false;
+  } catch (IllegalThreadStateException e) {
+   return true;
+  }
+ }
 }
