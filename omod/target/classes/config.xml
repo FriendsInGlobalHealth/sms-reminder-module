@@ -9,7 +9,7 @@
 	<package>org.openmrs.module.smsreminder</package>
 	<author>Nelson.Mahumane</author>
 	<description>
-		Reminder to FGH Patients to next visit.
+		Reminder to FGH Patients to next visit...
 	</description>
 	<updateURL>https://modules.openmrs.org/modules/download/smsreminder/update.rdf</updateURL>
 	<require_version>1.9.2</require_version>

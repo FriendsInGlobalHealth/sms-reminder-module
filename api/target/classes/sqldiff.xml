@@ -27,6 +27,7 @@
 			`remain_days` int(7) NOT NULL,
 			`patient_id` int(15) NOT NULL,
 			`status` varchar(20) DEFAULT NULL,
+			`reference` varchar(20) DEFAULT NULL,
 			`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (`sent_id`),
 			KEY `patient_pk` (`patient_id`),
