@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Created by nelson.mahumane on 20-10-2015.
- * Classe que organiza todos recursos necessarios para o envio de sms filtrando as de a cordo com as suas categoria
+ * Classe que organiza todos recursos necessarios para o envio de sms filtrando as de acordo com as suas categorias
  */
 public class SmsReminderResource {
     /**

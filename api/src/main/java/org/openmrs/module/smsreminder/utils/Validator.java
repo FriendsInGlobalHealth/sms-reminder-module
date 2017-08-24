@@ -1,24 +1,32 @@
 package org.openmrs.module.smsreminder.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Created by Nelson.Mahumane on 01-10-2015.
  */
 public class Validator {
 
- public static  String cellNumberValidator( String cellNumber){
+ public static  String cellNumberValidator( String cellNumber) {
+	 
         cellNumber=cellNumber.replace(" ","");
+        
         if(cellNumber.length()==9){
-            cellNumber="+258"+cellNumber;
+            cellNumber="258"+cellNumber;
+            cellNumber=StringUtils.leftPad(cellNumber, 14, "0");
+            return cellNumber;
         }
+        
         if(cellNumber.length()==12){
             cellNumber="+"+cellNumber;
         }
+        
         if(cellNumber.length()==13){
             if (cellNumber.startsWith("+2588")){
                 String cell=cellNumber.substring(6);
                 char op=cellNumber.charAt(5);
 
-                if (op!='2'&&op!='4'&&op!='6'&&op!='7'){
+                if (op!='2'&&op!='4'&&op!='6'&&op!='7') {
                     return "";
                 }
                 for (char letra : cell.toCharArray())  {
@@ -31,6 +39,7 @@ public class Validator {
                 return "";
             }
         }
+        
         return "";
     }
 

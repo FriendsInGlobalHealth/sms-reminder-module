@@ -9,9 +9,10 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.smsreminder.api.SmsReminderService;
 
 public class SmsReminderUtils {
-    protected final Log log = LogFactory.getLog(getClass());
-public static SmsReminderService getService(){
+	protected final Log log = LogFactory.getLog(getClass());
 
-return (SmsReminderService)Context.getService(SmsReminderService.class);
-}
+	public static SmsReminderService getService() {
+
+		return (SmsReminderService) Context.getService(SmsReminderService.class);
+	}
 }
