@@ -87,14 +87,14 @@ public class SendMessageController {
 		for (String number : asList) {
 			if (notificationPatients.size() > 1) {
 				sendMessage(smscenter, port, bandRate, number,
-						"Serão enviadas " + notificationPatients.size()
-								+ " Mensagens para Pacientes da Unidade Sanitária"
+						"Serao enviadas " + notificationPatients.size()
+								+ " Mensagens para Pacientes da Unidade Sanitaria"
 								+ locationService.getLocation(Integer.valueOf(us)).getName());
 			}
 
 			if (notificationPatients.size() == 1) {
 				sendMessage(smscenter, port, bandRate, number,
-						"Sera enviada " + notificationPatients.size() + " Mensagem para Paciente da Unidade Sanitária"
+						"Sera enviada " + notificationPatients.size() + " Mensagem para Paciente da Unidade Sanitaria"
 								+ locationService.getLocation(Integer.valueOf(us)).getName());
 			}
 
