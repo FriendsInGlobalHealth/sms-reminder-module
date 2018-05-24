@@ -37,6 +37,7 @@ public class SmsReminderServiceImpl extends BaseOpenmrsService implements SmsRem
 	protected final Log log = LogFactory.getLog(this.getClass());
 
 	private SmsReminderDAO dao;
+
 	@Autowired
 	private PatientDAO patientDAO;
 
@@ -96,6 +97,7 @@ public class SmsReminderServiceImpl extends BaseOpenmrsService implements SmsRem
 		return this.getDao().getSentByCreated(created);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List<Sent> getSentBetweenCreatedAndStatus(final Date start, final Date end, final List statuses)
 			throws APIException {
@@ -120,6 +122,14 @@ public class SmsReminderServiceImpl extends BaseOpenmrsService implements SmsRem
 	@Override
 	public List<NotificationFollowUpPatient> searchFollowUpPatient() {
 		return this.getDao().searchFollowUpPatient();
+	}
+
+	public PatientDAO getPatientDAO() {
+		return patientDAO;
+	}
+
+	public void setPatientDAO(PatientDAO patientDAO) {
+		this.patientDAO = patientDAO;
 	}
 
 }

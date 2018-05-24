@@ -22,12 +22,8 @@ import java.util.List;
 import org.junit.Ignore;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.smsreminder.modelo.NotificationFollowUpPatient;
-import org.openmrs.test.BaseModuleContextSensitiveTest;
 
-/**
- * Tests {@link {SmsReminderService}}.
- */
-public class SmsReminderServiceTest extends BaseModuleContextSensitiveTest {
+class SmsReminderServiceTest {
 
 	public void shouldSetupContext() {
 		assertNotNull(Context.getService(SmsReminderService.class));

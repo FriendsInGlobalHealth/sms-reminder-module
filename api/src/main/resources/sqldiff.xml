@@ -26,8 +26,10 @@
 			`remain_days` int(7) NOT NULL,
 			`patient_id` int(15) NOT NULL,
 			`status` varchar(20) DEFAULT NULL,
+			`uuid` char(38) NOT NULL,
 			`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (`sent_id`),
+			UNIQUE KEY `sent_uuid_index` (`uuid`),
 			KEY `patient_pk` (`patient_id`),
 			CONSTRAINT `patient_pk` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;

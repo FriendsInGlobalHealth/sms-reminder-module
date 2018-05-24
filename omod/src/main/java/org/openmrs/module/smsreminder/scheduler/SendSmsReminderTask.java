@@ -67,7 +67,9 @@ public class SendSmsReminderTask extends AbstractTask {
 						this.sendMessage(smscenter, gpPort.getPropertyValue(),
 								Integer.parseInt(gpBandRate.getPropertyValue()),
 								notificationFollowUpPatient.getPhoneNumber(), message);
+
 						notificationFollowUpPatient.setNotificationMassage(message);
+						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
 						this.saveSent(notificationFollowUpPatient);
 					}
 
@@ -77,17 +79,23 @@ public class SendSmsReminderTask extends AbstractTask {
 						this.sendMessage(smscenter, gpPort.getPropertyValue(),
 								Integer.parseInt(gpBandRate.getPropertyValue()),
 								notificationFollowUpPatient.getPhoneNumber(), message);
+						
 						notificationFollowUpPatient.setNotificationMassage(message);
-
+						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
 						this.saveSent(notificationFollowUpPatient);
 
 					}
 					if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 15) {
+
 						final String message = "A sua saude e' muito importante para si e para a sua familia."
 								+ " Lembra-se que esta sem " + "vir a consulta ha 15 dias.";
 						this.sendMessage(smscenter, gpPort.getPropertyValue(),
 								Integer.parseInt(gpBandRate.getPropertyValue()),
 								notificationFollowUpPatient.getPhoneNumber(), message);
+
+						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+						notificationFollowUpPatient.setNotificationMassage(message);
+
 						this.saveSent(notificationFollowUpPatient);
 
 					}
@@ -99,6 +107,7 @@ public class SendSmsReminderTask extends AbstractTask {
 								Integer.parseInt(gpBandRate.getPropertyValue()),
 								notificationFollowUpPatient.getPhoneNumber(), message);
 						notificationFollowUpPatient.setNotificationMassage(message);
+						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
 
 						this.saveSent(notificationFollowUpPatient);
 
@@ -110,6 +119,7 @@ public class SendSmsReminderTask extends AbstractTask {
 								Integer.parseInt(gpBandRate.getPropertyValue()),
 								notificationFollowUpPatient.getPhoneNumber(), message);
 						notificationFollowUpPatient.setNotificationMassage(message);
+						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
 
 						this.saveSent(notificationFollowUpPatient);
 
@@ -137,12 +147,14 @@ public class SendSmsReminderTask extends AbstractTask {
 		sent.setAlertDate(notificationFollowUpPatient.getNextFila());
 		sent.setRemainDays(notificationFollowUpPatient.getTotalFollowUpDays().intValue());
 		sent.setPatient(patientService.getPatient(notificationFollowUpPatient.getPatientId()));
-		sent.setSentType(SentType.Follow_Up);
+		sent.setUuid(notificationFollowUpPatient.getUuid());
+
 		smsReminderService.saveSent(sent);
 		this.log.info("save SMS");
 
 	}
 
+	@SuppressWarnings("unused")
 	private void getNotificationPatient() {
 		try {
 			final AdministrationService administrationService = Context.getAdministrationService();
@@ -186,9 +198,9 @@ public class SendSmsReminderTask extends AbstractTask {
 
 				for (final NotificationPatient notificationPatient : notificationPatients) {
 					final String messagem = (notificationPatient.getSexo().equals("M"))
-							? "O sr: " + notificationPatient.getNome() + " " + message + " "
-									+ "no " + locationService.getLocation(Integer.valueOf(us)).getName() + " "
-									+ "no dia  " + DatasUtil.formatarDataPt(notificationPatient.getProximaVisita())
+							? "O sr: " + notificationPatient.getNome() + " " + message + " " + "no "
+									+ locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia  "
+									+ DatasUtil.formatarDataPt(notificationPatient.getProximaVisita())
 							: "A sra: " + notificationPatient.getNome() + " " + message + " " + "no "
 									+ locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia  "
 									+ DatasUtil.formatarDataPt(notificationPatient.getProximaVisita());
