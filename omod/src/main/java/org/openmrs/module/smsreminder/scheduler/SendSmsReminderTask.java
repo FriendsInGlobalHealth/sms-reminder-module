@@ -69,6 +69,8 @@ public class SendSmsReminderTask extends AbstractTask {
 
 						notificationFollowUpPatient.setNotificationMassage(message);
 						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+						notificationFollowUpPatient.setSentType("Follow_Up");
+
 						this.saveSent(notificationFollowUpPatient);
 					}
 
@@ -81,6 +83,7 @@ public class SendSmsReminderTask extends AbstractTask {
 
 						notificationFollowUpPatient.setNotificationMassage(message);
 						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+						notificationFollowUpPatient.setSentType("Follow_Up");
 						this.saveSent(notificationFollowUpPatient);
 
 					}
@@ -93,8 +96,8 @@ public class SendSmsReminderTask extends AbstractTask {
 								notificationFollowUpPatient.getPhoneNumber(), message);
 
 						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+						notificationFollowUpPatient.setSentType("Follow_Up");
 						notificationFollowUpPatient.setNotificationMassage(message);
-
 						this.saveSent(notificationFollowUpPatient);
 
 					}
@@ -107,7 +110,7 @@ public class SendSmsReminderTask extends AbstractTask {
 								notificationFollowUpPatient.getPhoneNumber(), message);
 						notificationFollowUpPatient.setNotificationMassage(message);
 						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
-
+						notificationFollowUpPatient.setSentType("Follow_Up");
 						this.saveSent(notificationFollowUpPatient);
 
 					}
@@ -119,7 +122,7 @@ public class SendSmsReminderTask extends AbstractTask {
 								notificationFollowUpPatient.getPhoneNumber(), message);
 						notificationFollowUpPatient.setNotificationMassage(message);
 						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
-
+						notificationFollowUpPatient.setSentType("Follow_Up");
 						this.saveSent(notificationFollowUpPatient);
 
 					}
@@ -147,7 +150,7 @@ public class SendSmsReminderTask extends AbstractTask {
 		sent.setRemainDays(notificationFollowUpPatient.getTotalFollowUpDays().intValue());
 		sent.setPatient(patientService.getPatient(notificationFollowUpPatient.getPatientId()));
 		sent.setUuid(notificationFollowUpPatient.getUuid());
-		sent.setSentType("Follow_Up");
+		sent.setSentType(notificationFollowUpPatient.getSentType());
 		smsReminderService.saveSent(sent);
 		this.log.info("save SMS");
 

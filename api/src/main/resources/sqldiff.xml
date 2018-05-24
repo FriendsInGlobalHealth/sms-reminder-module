@@ -21,7 +21,7 @@
 			CREATE TABLE IF NOT EXISTS `smsreminder_sent` (
 			`sent_id` int(15) NOT NULL AUTO_INCREMENT,
 			`cell_number` varchar(20) NOT NULL,
-			`sent_type` varchar(20) DEFAULT NULL,
+			`sent_type` varchar(20) NOT NULL,
 			`alert_date` date NOT NULL,
 			`message` varchar(150) NOT NULL,
 			`remain_days` int(7) NOT NULL,

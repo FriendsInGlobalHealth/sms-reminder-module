@@ -15,6 +15,8 @@ public class NotificationFollowUpPatient extends BaseOpenmrsData implements Seri
 	private String phoneNumber;
 	private BigInteger totalFollowUpDays;
 	private String notificationMassage;
+	private String sentType;
+
 
 	public Integer getPatientId() {
 		return this.patientId;
@@ -64,6 +66,14 @@ public class NotificationFollowUpPatient extends BaseOpenmrsData implements Seri
 
 	public void setNotificationMassage(final String notificationMassage) {
 		this.notificationMassage = notificationMassage;
+	}
+
+	public String getSentType() {
+		return sentType;
+	}
+
+	public void setSentType(String sentType) {
+		this.sentType = sentType;
 	}
 
 }
