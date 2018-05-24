@@ -15,6 +15,7 @@
 		</id>
 		<discriminator column="nid" insert="false" />-->
 		<property name="telemovel" type="java.lang.String" column="telemovel" length="10" insert="false"/>
+		<property name="sentType" type="java.lang.String" column="sent_type" length="20" />
 		<property name="diasRemanescente" type="java.lang.Integer" column="dias_remanescente" length="20" insert="false" />
 		<!--<property name="identificador" type="java.lang.Integer" column="identificador" length="11" insert="false" />
 		<property name="tipoVisita" type="java.lang.Integer" column="tipo_visita" length="11" insert="false" />-->

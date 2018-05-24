@@ -21,6 +21,8 @@ public class NotificationPatient extends BaseOpenmrsData implements Serializable
     private Date ultimaVisita;
     private Date proximaVisita;
     private Date inicioTarv;
+	private String sentType;
+
 
     public NotificationPatient(){}
 
@@ -109,4 +111,12 @@ public class NotificationPatient extends BaseOpenmrsData implements Serializable
     public void setSexo(String sexo) {
         this.sexo = sexo;
     }
+
+	public String getSentType() {
+		return sentType;
+	}
+
+	public void setSentType(String sentType) {
+		this.sentType = sentType;
+	}
 }
