@@ -18,7 +18,6 @@ import org.openmrs.module.smsreminder.modelo.NotificationPatient;
 import org.openmrs.module.smsreminder.modelo.Sent;
 import org.openmrs.module.smsreminder.utils.DatasUtil;
 import org.openmrs.module.smsreminder.utils.SMSClient;
-import org.openmrs.module.smsreminder.utils.SentType;
 import org.openmrs.module.smsreminder.utils.SmsReminderResource;
 import org.openmrs.module.smsreminder.utils.Validator;
 import org.openmrs.scheduler.tasks.AbstractTask;
@@ -27,7 +26,7 @@ import org.openmrs.scheduler.tasks.AbstractTask;
  * Created by nelson.mahumane on 20-10-2015.
  */
 public class SendSmsReminderTask extends AbstractTask {
-	// private static Log log = LogFactory.getLog(SendSmsReminderTask.class);
+
 	private final Log log = LogFactory.getLog(this.getClass());
 
 	@Override
@@ -79,7 +78,7 @@ public class SendSmsReminderTask extends AbstractTask {
 						this.sendMessage(smscenter, gpPort.getPropertyValue(),
 								Integer.parseInt(gpBandRate.getPropertyValue()),
 								notificationFollowUpPatient.getPhoneNumber(), message);
-						
+
 						notificationFollowUpPatient.setNotificationMassage(message);
 						notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
 						this.saveSent(notificationFollowUpPatient);
@@ -148,13 +147,12 @@ public class SendSmsReminderTask extends AbstractTask {
 		sent.setRemainDays(notificationFollowUpPatient.getTotalFollowUpDays().intValue());
 		sent.setPatient(patientService.getPatient(notificationFollowUpPatient.getPatientId()));
 		sent.setUuid(notificationFollowUpPatient.getUuid());
-
+		sent.setSentType("Follow_Up");
 		smsReminderService.saveSent(sent);
 		this.log.info("save SMS");
 
 	}
 
-	@SuppressWarnings("unused")
 	private void getNotificationPatient() {
 		try {
 			final AdministrationService administrationService = Context.getAdministrationService();
@@ -213,7 +211,7 @@ public class SendSmsReminderTask extends AbstractTask {
 					sent.setMessage(messagem);
 					sent.setRemainDays(notificationPatient.getDiasRemanescente());
 					sent.setPatient(patientService.getPatient(notificationPatient.getIdentificador()));
-					sent.setSentType(SentType.New_Member);
+					sent.setSentType("New_Member");
 					smsReminderService.saveSent(sent);
 				}
 			}
