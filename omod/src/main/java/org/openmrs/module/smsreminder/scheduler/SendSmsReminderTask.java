@@ -205,8 +205,6 @@ public class SendSmsReminderTask extends AbstractTask {
 							: "A sra: " + notificationPatient.getNome() + " " + message + " " + "no "
 									+ locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia  "
 									+ DatasUtil.formatarDataPt(notificationPatient.getProximaVisita());
-
-					notificationPatient.setSentType("New_Member");
 					this.sendMessage(smscenter, port, bandRate, notificationPatient.getTelemovel(), messagem);
 
 					final Sent sent = new Sent();
@@ -215,7 +213,6 @@ public class SendSmsReminderTask extends AbstractTask {
 					sent.setMessage(messagem);
 					sent.setRemainDays(notificationPatient.getDiasRemanescente());
 					sent.setPatient(patientService.getPatient(notificationPatient.getIdentificador()));
-					sent.setSentType(notificationPatient.getSentType());
 					smsReminderService.saveSent(sent);
 				}
 			}
