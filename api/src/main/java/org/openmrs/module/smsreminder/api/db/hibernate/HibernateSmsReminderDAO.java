@@ -172,7 +172,7 @@ public class HibernateSmsReminderDAO implements SmsReminderDAO {
 	@Override
 	public List<NotificationFollowUpPatient> searchFollowUpPatient() {
 
-		final String sql = "select patient_id, DATE(max_frida.encounter_datetime), pa.value, datediff(CURDATE(),o.value_datetime) "
+		final String sql = "select patient_id, DATE(max_frida.encounter_datetime), pa.value, datediff(CURDATE(),o.value_datetime), o.location_id "
 				+ "from(Select p.patient_id,max(encounter_datetime) encounter_datetime from patient p  "
 				+ "inner join encounter e on e.patient_id=p.patient_id where p.voided=0 and e.voided=0 and e.encounter_type=18  and e.encounter_datetime<=CURDATE() "
 				+ "group by p.patient_id) max_frida  inner join obs o on o.person_id=max_frida.patient_id "
@@ -221,6 +221,7 @@ public class HibernateSmsReminderDAO implements SmsReminderDAO {
 			notificationFollowUpPatient.setNextFila((Date) object[1]);
 			notificationFollowUpPatient.setPhoneNumber((String) object[2]);
 			notificationFollowUpPatient.setTotalFollowUpDays((BigInteger) object[3]);
+			notificationFollowUpPatient.setLocationId((Integer) object[4]);
 
 			notificationFollowUpPatients.add(notificationFollowUpPatient);
 		}

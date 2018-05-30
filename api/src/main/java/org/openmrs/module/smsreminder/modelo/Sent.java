@@ -22,6 +22,7 @@ public class Sent extends BaseOpenmrsData implements Serializable {
 	private Patient patient;
 	private Integer remainDays;
 	private String sentType;
+	private Integer locationId;
 
 	public Integer getSentId() {
 		return this.sentId;
@@ -124,5 +125,14 @@ public class Sent extends BaseOpenmrsData implements Serializable {
 	public void setSentType(String sentType) {
 		this.sentType = sentType;
 	}
+
+	public Integer getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
+	}
+
 
 }

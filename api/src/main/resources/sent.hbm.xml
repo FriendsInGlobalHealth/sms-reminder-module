@@ -18,6 +18,7 @@
 		<property name="message" type="java.lang.String" column="message" not-null="true" length="150"/>
 		<property name="status" type="java.lang.String" column="status"  length="20"/>
 		<property name="uuid" type="java.lang.String" column="uuid" length="38" unique="true" />
+		<property name="locationId" type="java.lang.Integer" column="location_id" not-null="true" length="5"/>
 		<!-- bi-directional many-to-one association to Patient -->
 		<many-to-one name="patient" class="org.openmrs.Patient" not-null="true" column="patient_id"/>
 	</class>
