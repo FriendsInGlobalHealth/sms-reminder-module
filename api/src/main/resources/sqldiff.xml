@@ -25,6 +25,7 @@
 			`alert_date` date NOT NULL,
 			`message` varchar(150) NOT NULL,
 			`remain_days` int(7) NOT NULL,
+			`location_id` int(7) NOT NULL,
 			`patient_id` int(15) NOT NULL,
 			`status` varchar(20) DEFAULT NULL,
 			`uuid` char(38) NOT NULL,
