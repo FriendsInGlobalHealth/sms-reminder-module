@@ -18,7 +18,6 @@ import org.openmrs.module.smsreminder.modelo.NotificationPatient;
 import org.openmrs.module.smsreminder.modelo.Sent;
 import org.openmrs.module.smsreminder.utils.DatasUtil;
 import org.openmrs.module.smsreminder.utils.SMSClient;
-import org.openmrs.module.smsreminder.utils.SentType;
 import org.openmrs.module.smsreminder.utils.SmsReminderResource;
 import org.openmrs.module.smsreminder.utils.Validator;
 import org.openmrs.scheduler.tasks.AbstractTask;
@@ -27,7 +26,7 @@ import org.openmrs.scheduler.tasks.AbstractTask;
  * Created by nelson.mahumane on 20-10-2015.
  */
 public class SendSmsReminderTask extends AbstractTask {
-	// private static Log log = LogFactory.getLog(SendSmsReminderTask.class);
+
 	private final Log log = LogFactory.getLog(this.getClass());
 
 	@Override
@@ -50,6 +49,7 @@ public class SendSmsReminderTask extends AbstractTask {
 			final String smscenter = gpSmscenter.getPropertyValue();
 			final GlobalProperty gpPort = administrationService.getGlobalPropertyObject("smsreminder.port");
 			final GlobalProperty gpBandRate = administrationService.getGlobalPropertyObject("smsreminder.bandRate");
+			SMSClient smsClient = new SMSClient(0);
 
 			final List<NotificationFollowUpPatient> notificationPatients = SmsReminderResource
 					.getAllNotificationFolowUpPatient();
@@ -57,74 +57,145 @@ public class SendSmsReminderTask extends AbstractTask {
 			if (!notificationPatients.isEmpty()) {
 
 				for (final NotificationFollowUpPatient notificationFollowUpPatient : notificationPatients) {
+					try {
 
-					if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 4) {
+						if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 4) {
 
-						final String message = "Com saude ha alegria. Lembra-te que tens visita marcada para"
-								+ " o dia " + notificationFollowUpPatient.getNextFila()
-								+ " Vem ao teu hospital,estamos a tua espera!";
+							String message = "Com saude ha alegria. Lembra-te que tens visita marcada para" + " o dia "
+									+ notificationFollowUpPatient.getNextFila()
+									+ " Vem ao teu hospital,estamos a tua espera!";
 
-						this.sendMessage(smscenter, gpPort.getPropertyValue(),
-								Integer.parseInt(gpBandRate.getPropertyValue()),
-								notificationFollowUpPatient.getPhoneNumber(), message);
-						notificationFollowUpPatient.setNotificationMassage(message);
-						this.saveSent(notificationFollowUpPatient);
-					}
+							synchronized (smsClient) {
 
-					if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 7) {
-						final String message = "A tua saude e muito importante. Lembra-te que tinhas visita marcada para o dia "
-								+ notificationFollowUpPatient.getNextFila() + " Nao deixes de vir ao teu hospital!";
-						this.sendMessage(smscenter, gpPort.getPropertyValue(),
-								Integer.parseInt(gpBandRate.getPropertyValue()),
-								notificationFollowUpPatient.getPhoneNumber(), message);
-						notificationFollowUpPatient.setNotificationMassage(message);
+								this.sendMessage(smscenter, gpPort.getPropertyValue(),
+										Integer.parseInt(gpBandRate.getPropertyValue()),
+										Validator.cellNumberValidator(notificationFollowUpPatient.getPhoneNumber()),
+										message);
 
-						this.saveSent(notificationFollowUpPatient);
+								while (smsClient.status == -1)
+									smsClient.wait();
+							}
+							notificationFollowUpPatient.setNotificationMassage(message);
+							notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+							notificationFollowUpPatient.setSentType("Follow_Up");
 
-					}
-					if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 15) {
-						final String message = "A sua saude e' muito importante para si e para a sua familia."
-								+ " Lembra-se que esta sem " + "vir a consulta ha 15 dias.";
-						this.sendMessage(smscenter, gpPort.getPropertyValue(),
-								Integer.parseInt(gpBandRate.getPropertyValue()),
-								notificationFollowUpPatient.getPhoneNumber(), message);
-						this.saveSent(notificationFollowUpPatient);
+							if (smsClient.status == 0) {
+								this.saveSent(notificationFollowUpPatient);
+							}
+						}
 
-					}
+						if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 7) {
 
-					if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 30) {
-						final String message = "A sua saude e' muito importante para si e para a sua familia. "
-								+ "Continuamos a sua espera. Nao deixe de vir ao seu hospital.";
-						this.sendMessage(smscenter, gpPort.getPropertyValue(),
-								Integer.parseInt(gpBandRate.getPropertyValue()),
-								notificationFollowUpPatient.getPhoneNumber(), message);
-						notificationFollowUpPatient.setNotificationMassage(message);
+							final String message = "A tua saude e muito importante. Lembra-te que tinhas visita marcada para o dia "
+									+ notificationFollowUpPatient.getNextFila() + " Nao deixes de vir ao teu hospital!";
 
-						this.saveSent(notificationFollowUpPatient);
+							synchronized (smsClient) {
 
-					}
-					if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 60) {
-						final String message = "Com saude construimos o futuro, "
-								+ "continue a controlar a sua saude no hospital. " + "Estamos a sua espera!";
-						this.sendMessage(smscenter, gpPort.getPropertyValue(),
-								Integer.parseInt(gpBandRate.getPropertyValue()),
-								notificationFollowUpPatient.getPhoneNumber(), message);
-						notificationFollowUpPatient.setNotificationMassage(message);
+								this.sendMessage(smscenter, gpPort.getPropertyValue(),
+										Integer.parseInt(gpBandRate.getPropertyValue()),
+										Validator.cellNumberValidator(notificationFollowUpPatient.getPhoneNumber()),
+										message);
 
-						this.saveSent(notificationFollowUpPatient);
+								while (smsClient.status == -1)
+									smsClient.wait();
+							}
 
+							notificationFollowUpPatient.setNotificationMassage(message);
+							notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+							notificationFollowUpPatient.setSentType("Follow_Up");
+
+							if (smsClient.status == 0) {
+								this.saveSent(notificationFollowUpPatient);
+							}
+
+						}
+						if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 15) {
+
+							final String message = "A sua saude e' muito importante para si e para a sua familia."
+									+ " Lembra-se que esta sem " + "vir a consulta ha 15 dias.";
+
+							synchronized (smsClient) {
+
+								this.sendMessage(smscenter, gpPort.getPropertyValue(),
+										Integer.parseInt(gpBandRate.getPropertyValue()),
+										Validator.cellNumberValidator(notificationFollowUpPatient.getPhoneNumber()),
+										message);
+
+								while (smsClient.status == -1)
+									smsClient.wait();
+							}
+
+							notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+							notificationFollowUpPatient.setSentType("Follow_Up");
+							notificationFollowUpPatient.setNotificationMassage(message);
+
+							if (smsClient.status == 0) {
+								this.saveSent(notificationFollowUpPatient);
+							}
+
+						}
+
+						if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 30) {
+							final String message = "A sua saude e' muito importante para si e para a sua familia. "
+									+ "Continuamos a sua espera. Nao deixe de vir ao seu hospital.";
+
+							synchronized (smsClient) {
+
+								this.sendMessage(smscenter, gpPort.getPropertyValue(),
+										Integer.parseInt(gpBandRate.getPropertyValue()),
+										Validator.cellNumberValidator(notificationFollowUpPatient.getPhoneNumber()),
+										message);
+
+								while (smsClient.status == -1)
+									smsClient.wait();
+							}
+
+							notificationFollowUpPatient.setNotificationMassage(message);
+							notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+							notificationFollowUpPatient.setSentType("Follow_Up");
+
+							if (smsClient.status == 0) {
+								this.saveSent(notificationFollowUpPatient);
+							}
+
+						}
+						if (notificationFollowUpPatient.getTotalFollowUpDays().intValue() == 60) {
+							final String message = "Com saude construimos o futuro, "
+									+ "continue a controlar a sua saude no hospital. " + "Estamos a sua espera!";
+
+							synchronized (smsClient) {
+
+								this.sendMessage(smscenter, gpPort.getPropertyValue(),
+										Integer.parseInt(gpBandRate.getPropertyValue()),
+										Validator.cellNumberValidator(notificationFollowUpPatient.getPhoneNumber()),
+										message);
+
+								while (smsClient.status == -1)
+									smsClient.wait();
+							}
+
+							notificationFollowUpPatient.setNotificationMassage(message);
+							notificationFollowUpPatient.setUuid(notificationFollowUpPatient.getUuid());
+							notificationFollowUpPatient.setSentType("Follow_Up");
+
+							if (smsClient.status == 0) {
+								this.saveSent(notificationFollowUpPatient);
+							}
+
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 			}
-		} catch (
-
-		final Throwable t) {
-			this.log.error("Error while sending SMS ", t);
+		} catch (Throwable t) {
+			log.error("Error while sending SMS ", t);
 			throw new APIException(t);
 		} finally {
 			Context.closeSession();
 		}
-		this.log.info("Finish send SMS");
+		log.info("Finish send SMS");
+
 	}
 
 	private void saveSent(final NotificationFollowUpPatient notificationFollowUpPatient) {
@@ -137,7 +208,9 @@ public class SendSmsReminderTask extends AbstractTask {
 		sent.setAlertDate(notificationFollowUpPatient.getNextFila());
 		sent.setRemainDays(notificationFollowUpPatient.getTotalFollowUpDays().intValue());
 		sent.setPatient(patientService.getPatient(notificationFollowUpPatient.getPatientId()));
-		sent.setSentType(SentType.Follow_Up);
+		sent.setUuid(notificationFollowUpPatient.getUuid());
+		sent.setSentType(notificationFollowUpPatient.getSentType());
+		sent.setLocationId(notificationFollowUpPatient.getLocationId());
 		smsReminderService.saveSent(sent);
 		this.log.info("save SMS");
 
@@ -162,6 +235,7 @@ public class SendSmsReminderTask extends AbstractTask {
 			final SmsReminderService smsReminderService = SmsReminderUtils.getService();
 			final PatientService patientService = Context.getPatientService();
 			final LocationService locationService = Context.getLocationService();
+			SMSClient smsClient = new SMSClient(0);
 
 			final List<String> asList = Arrays.asList(numbers.split(","));
 
@@ -185,15 +259,21 @@ public class SendSmsReminderTask extends AbstractTask {
 			if ((notificationPatients != null) && !notificationPatients.isEmpty()) {
 
 				for (final NotificationPatient notificationPatient : notificationPatients) {
+
 					final String messagem = (notificationPatient.getSexo().equals("M"))
-							? "O sr: " + notificationPatient.getNome() + " " + message + " "
-									+ "no " + locationService.getLocation(Integer.valueOf(us)).getName() + " "
-									+ "no dia  " + DatasUtil.formatarDataPt(notificationPatient.getProximaVisita())
+							? "O sr: " + notificationPatient.getNome() + " " + message + " " + "no "
+									+ locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia  "
+									+ DatasUtil.formatarDataPt(notificationPatient.getProximaVisita())
 							: "A sra: " + notificationPatient.getNome() + " " + message + " " + "no "
 									+ locationService.getLocation(Integer.valueOf(us)).getName() + " " + "no dia  "
 									+ DatasUtil.formatarDataPt(notificationPatient.getProximaVisita());
 
-					this.sendMessage(smscenter, port, bandRate, notificationPatient.getTelemovel(), messagem);
+					synchronized (smsClient) {
+						smsClient.sendMessage(smscenter, port, bandRate,
+								Validator.cellNumberValidator(notificationPatient.getTelemovel()), messagem);
+						while (smsClient.status == -1)
+							smsClient.wait();
+					}
 
 					final Sent sent = new Sent();
 					sent.setCellNumber(notificationPatient.getTelemovel());
@@ -201,8 +281,10 @@ public class SendSmsReminderTask extends AbstractTask {
 					sent.setMessage(messagem);
 					sent.setRemainDays(notificationPatient.getDiasRemanescente());
 					sent.setPatient(patientService.getPatient(notificationPatient.getIdentificador()));
-					sent.setSentType(SentType.New_Member);
-					smsReminderService.saveSent(sent);
+
+					if (smsClient.status == 0) {
+						smsReminderService.saveSent(sent);
+					}
 				}
 			}
 

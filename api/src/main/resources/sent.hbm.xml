@@ -4,18 +4,22 @@
     "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
 
 <hibernate-mapping package="org.openmrs.module.smsreminder.modelo">
+
 	<class name="org.openmrs.module.smsreminder.modelo.Sent" table="smsreminder_sent" batch-size="25">
 		<id name="sentId" type="int" column="sent_id" unsaved-value="0">
 			<generator class="native" />
 		</id>
 		<discriminator column="sent_id" insert="false" />
 		<property name="cellNumber" type="java.lang.String" column="cell_number" length="15" />
-		<property name="alertDate" type="java.util.Date" column="alert_date" />
+		<property name="sentType" type="java.lang.String" column="sent_type" length="20" />
+		<property name="alertDate" type="java.util.Date" column="alert_date" not-null="true" length="19"/>
 		<property name="dateCreated" type="java.util.Date" column="created" not-null="true" length="19" />
 		<property name="remainDays" type="java.lang.Integer" column="remain_days" not-null="true" length="5"/>
 		<property name="message" type="java.lang.String" column="message" not-null="true" length="150"/>
 		<property name="status" type="java.lang.String" column="status"  length="20"/>
+		<property name="uuid" type="java.lang.String" column="uuid" length="38" unique="true" />
+		<property name="locationId" type="java.lang.Integer" column="location_id" not-null="true" length="5"/>
 		<!-- bi-directional many-to-one association to Patient -->
-		<many-to-one name="patient" class="org.openmrs.Patient" not-null="false" column="patient_id"/>
+		<many-to-one name="patient" class="org.openmrs.Patient" not-null="true" column="patient_id"/>
 	</class>
 </hibernate-mapping>

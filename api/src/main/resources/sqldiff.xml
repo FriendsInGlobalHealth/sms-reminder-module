@@ -21,13 +21,17 @@
 			CREATE TABLE IF NOT EXISTS `smsreminder_sent` (
 			`sent_id` int(15) NOT NULL AUTO_INCREMENT,
 			`cell_number` varchar(20) NOT NULL,
+			`sent_type` varchar(20),
 			`alert_date` date NOT NULL,
 			`message` varchar(150) NOT NULL,
 			`remain_days` int(7) NOT NULL,
+			`location_id` int(7) NOT NULL,
 			`patient_id` int(15) NOT NULL,
 			`status` varchar(20) DEFAULT NULL,
+			`uuid` char(38) NOT NULL,
 			`created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (`sent_id`),
+			UNIQUE KEY `sent_uuid_index` (`uuid`),
 			KEY `patient_pk` (`patient_id`),
 			CONSTRAINT `patient_pk` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
