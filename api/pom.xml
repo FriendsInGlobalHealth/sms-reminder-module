@@ -72,7 +72,13 @@
             <artifactId>smslib</artifactId>
             <version>3.5.3</version>
         </dependency>
-
+        
+		<dependency>
+		    <groupId>org.openmrs.module</groupId>
+		    <artifactId>legacyui-omod</artifactId>
+		    <version>1.5.0</version>
+		    <scope>provided</scope>
+		</dependency>
         <!-- <dependency>
              <groupId>org.rxtx</groupId>
              <artifactId>rxtxcomm</artifactId>
