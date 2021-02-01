@@ -33,7 +33,7 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.9.2</openMRSVersion>
+		<openMRSVersion>2.3.2</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -102,6 +102,7 @@
 				<artifactId>quartz</artifactId>
 				<version>2.1.5</version>
 			</dependency>
+			
 			<!-- https://mvnrepository.com/artifact/org.smslib/smslib -->
 			<dependency>
 				<groupId>org.smslib</groupId>
