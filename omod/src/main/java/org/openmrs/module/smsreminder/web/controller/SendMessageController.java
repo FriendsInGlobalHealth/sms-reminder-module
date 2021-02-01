@@ -2,6 +2,7 @@ package org.openmrs.module.smsreminder.web.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
 
 /**
  * Created by nelson.mahumane on 09-06-2015.
@@ -148,7 +152,7 @@ public class SendMessageController {
 
 	public void sendMessage(final String smscenter, final String porta, final int bandRate, final String recipient, final String message) {
 		final SMSClient smsClient = new SMSClient(0);
-
+		//listPorts();
 		try {
 			synchronized (smsClient) {
 				smsClient.sendMessage(smscenter, porta, bandRate, Validator.cellNumberValidator(recipient), message);
@@ -171,12 +175,14 @@ public class SendMessageController {
 	public ModelAndView patientListSMSLIB() {
 		final ModelAndView modelAndView = new ModelAndView();
 		modelAndView.addObject("notificationPatients", SmsReminderResource.getAllNotificationPatiens());
+		//modelAndView.addObject("notificationPatients", SmsReminderResource.tmpGetAllNotificationPatiens());
+		
 		return modelAndView;
 	}
 
 	@RequestMapping(value = "/module/smsreminder/smslib_manual_submission", method = RequestMethod.POST)
 	public ModelAndView executeSendSmsLib(final HttpServletRequest request) {
-
+		//listPorts();
 		final AdministrationService administrationService = Context.getAdministrationService();
 		final GlobalProperty gpSmscenter = administrationService.getGlobalPropertyObject("smsreminder.smscenter");
 		final String smscenter = gpSmscenter.getPropertyValue();
@@ -339,6 +345,37 @@ public class SendMessageController {
 	@RequestMapping(value = "/module/smsreminder/smslib_manual_read", method = RequestMethod.POST)
 	public void executeReadSmslibRead(final HttpServletRequest request) {
 
+	}
+	
+	private void listPorts() {
+		 //Obtain all currently available serial ports
+        Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
+
+        ArrayList<String> portNameList = new ArrayList<String>();
+
+        //Add the available serial port name to the List and return the List
+        while (portList.hasMoreElements()) {
+        	CommPortIdentifier p = portList.nextElement();
+        	
+            String portName = p.getName();
+            String a = p.getCurrentOwner();
+            int b = p.getPortType();
+            
+            System.err.println("portName["+ portName+ "], owner["+a+"], type["+b+"]");
+            portNameList.add(portName);
+            
+            try {
+				CommPortIdentifier pi = CommPortIdentifier.getPortIdentifier(portName);
+				System.err.println("pi,portName: " + pi.getName());
+				
+			} catch (NoSuchPortException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            
+        }
+        
+        System.out.println(portNameList);
 	}
 
 }
